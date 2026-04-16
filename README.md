@@ -24,8 +24,8 @@ This skill encodes the actual, project-specific rules you already document in `C
 | `esphome/esphome` | `dev` | C++/Python dual-side rules, clang-format, component structure |
 | `music-assistant/server` | `main` | Ruff, async patterns, provider structure, HAOS dev-addon test instructions in PRs |
 | `music-assistant/frontend` | `main` | Vue/TS conventions, HAOS dev-addon test instructions |
-| `music-assistant/mobile-app` | `main` | Flutter/Dart conventions |
-| `music-assistant/desktop-app` | `main` | Electron/TS conventions |
+| `music-assistant/mobile-app` | `main` | Kotlin Multiplatform + Compose Multiplatform (Android + iOS from shared codebase), Gradle Kotlin DSL, Koin DI, Material3, `StateFlow` over `LiveData`, no `!!` in live code, minimize `expect/actual` |
+| `music-assistant/desktop-app` | `main` | Tauri v2 (Rust backend + WebView), Yarn, wraps the MA web frontend with native extras (SendSpin audio, OS media controls, Discord Rich Presence, mDNS discovery) |
 | `OHF-Voice/*` | `main` | Voice pipeline / wake-word / intent conventions |
 | `sendspin/*` | `main` | Conventional-commit prefixes (`feat/`, `fix/`, `refactor/`, `test/`, `chore/`) |
 
