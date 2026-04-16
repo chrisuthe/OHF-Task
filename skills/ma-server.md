@@ -1,6 +1,6 @@
 # Music Assistant Server
 
-**Repo:** `music-assistant/server` | **Base branch:** `main` | **Python 3.12**
+**Repo:** `music-assistant/server` | **Base branch:** `dev` | **Python 3.12**
 
 ---
 
@@ -44,7 +44,7 @@ python -m pytest tests/ --asyncio-mode=auto
 
 ## PR Requirements
 
-Target: `main`
+Target: `dev`
 
 - Description and rationale
 - Link to related issue
@@ -61,8 +61,8 @@ Set `server_repo` in the addon config:
 | Input Format | What It Resolves To |
 |---|---|
 | `""` (empty) | Latest nightly release (fastest startup) |
-| `main` | `music-assistant/server@main` |
-| `feat/my-feature` | Branch on main repo |
+| `dev` | `music-assistant/server@dev` |
+| `feat/my-feature` | Branch on dev repo |
 | `pr-456` | PR #456 (`refs/pull/456/head`) |
 | `someuser/server@branch` | Fork + branch |
 | `abc123def456` | Specific commit SHA |

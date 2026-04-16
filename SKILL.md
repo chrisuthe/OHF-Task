@@ -39,7 +39,7 @@ Map to a project and **read the corresponding sub-skill file** from the `skills/
 | `home-assistant/core` | `skills/ha-core.md` | `dev` |
 | `home-assistant/frontend` | `skills/ha-frontend.md` | `dev` |
 | `esphome/esphome` | `skills/esphome.md` | `dev` |
-| `music-assistant/server` | `skills/ma-server.md` | `main` |
+| `music-assistant/server` | `skills/ma-server.md` | `dev` |
 | `music-assistant/frontend` | `skills/ma-frontend.md` | `main` |
 | `music-assistant/mobile-app` | `skills/ma-mobile.md` | `main` |
 | `music-assistant/desktop-app` | `skills/ma-desktop.md` | `main` |
