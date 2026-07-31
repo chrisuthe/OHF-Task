@@ -47,6 +47,23 @@
 
 ## Lint & Test
 
+### Hook runner: `prek`, NOT `pre-commit`
+
+```bash
+prek run --all-files
+```
+
+**This repo's hook runner is `prek`.** `pre-commit` is *also* installed in a core
+checkout, so invoking it appears to succeed while silently bypassing the real
+runner — a green local result, then CI fails. Always use `prek` here.
+(`music-assistant/server` and `esphome/esphome` are the opposite: they use
+`pre-commit`. Do not carry the habit between repos.)
+
+### Individual tools
+
+Useful for tight loops on specific files. The hook runner above is what actually
+gates the PR, so finish with it.
+
 ```bash
 ruff check <files>
 ruff format --check <files>

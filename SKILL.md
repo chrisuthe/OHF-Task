@@ -43,8 +43,28 @@ Map to a project and **read the corresponding sub-skill file** from the `skills/
 | `music-assistant/frontend` | `skills/ma-frontend.md` | `main` |
 | `music-assistant/mobile-app` | `skills/ma-mobile.md` | `main` |
 | `music-assistant/desktop-app` | `skills/ma-desktop.md` | `main` |
+| `music-assistant/models` | `skills/ma-server.md` | `main` |
+| `home-assistant/intents` | `skills/ohf-voice.md` | `main` |
 | `OHF-Voice/*` | `skills/ohf-voice.md` | `main` |
 | `sendspin/*` | `skills/sendspin.md` | `main` |
+
+**Do not assume a base branch from this table alone** — the user may be working
+from a fork whose remote is `<their-user>/<repo>`, and forks can lag or rename
+branches. Confirm the branch exists before creating the worktree:
+
+```bash
+git rev-parse --verify origin/<base-branch>
+```
+
+If it does not resolve, fall back to the remote's own default and tell the user
+which base you used and why:
+
+```bash
+git symbolic-ref refs/remotes/origin/HEAD --short   # e.g. origin/main
+```
+
+`models` and `intents` are `main`, not `dev`, despite sitting alongside repos
+that do use `dev` — checking is cheaper than guessing wrong.
 
 If the repo doesn't match a known project, inform the user and ask which project's conventions to follow.
 
@@ -132,9 +152,16 @@ Read the project's `CLAUDE.md` / `AGENTS.md` in the repo. Apply the standards fr
 
 Explore the codebase using the "Research Hints" from the sub-skill file. Then follow the educational approach from `shared.md` — present a "lay of the land" briefing and wait for the user's questions before proceeding.
 
-### 7c. Plan
+### 7c. Plan — and run it past the Sage
 
-Follow the planning approach from `shared.md`. Present the plan for approval before writing code.
+Form a candidate plan, then **consult the `ohf-sage` subagent before presenting it
+as final** (see "Consult the OHF Sage" in `shared.md`). Fold its answer in, and
+surface any rule it cites *with* the citation so the user sees the reasoning.
+
+Skip this for `ha-core` and `ha-frontend` — the Sage does not speak for Home
+Assistant.
+
+Then follow the planning approach from `shared.md`. Present the plan for approval before writing code.
 
 ### 7d. Implement with explanation
 
@@ -148,27 +175,49 @@ Run the lint/test commands specified in the sub-skill file. Fix any issues befor
 
 Run the test commands specified in the sub-skill file.
 
-### 7g. Final walkthrough
+### 7g. Sage review, then final walkthrough
 
-Follow the walkthrough approach from `shared.md`. Wait for the user to confirm understanding before creating the PR.
+**First, have the `ohf-sage` subagent review the diff** against project standards
+(see `shared.md`). Treat an objection as blocking until either the change is made
+or the user explicitly overrules it — and state which happened in the walkthrough
+below. Skip for `ha-core` / `ha-frontend`.
 
-### 7h. Create a PR
+Then follow the walkthrough approach from `shared.md`. Wait for the user to confirm understanding before creating the PR.
+
+### 7h. Push, then hand the PR to the user
+
+**Do NOT run `gh pr create`, and do not open the PR by any other means.** Per the
+OHF `AI_POLICY.md`, autonomous agents may not open pull requests or issues. Your
+job ends at pushing the branch and preparing everything the user needs; *they*
+open it.
 
 1. Push the branch:
    ```bash
    git push -u origin <prefix>/<name>
    ```
 
-2. Create the pull request using `gh`:
+2. Build the compare URL. Which form depends on whether `origin` is the upstream
+   repo or the user's fork:
    ```bash
-   gh pr create --title "<title>" --body "<body>"
+   git remote get-url origin
+   git remote get-url upstream 2>/dev/null   # present => fork workflow
    ```
 
-   Use the PR requirements from the sub-skill file to format the body correctly.
+   - **Fork** (`origin` is `<you>/<repo>`, `upstream` is the OHF repo):
+     `https://github.com/<upstream-owner>/<repo>/compare/<base-branch>...<your-user>:<prefix>/<name>?expand=1`
+   - **Direct push access** (no `upstream` remote):
+     `https://github.com/<owner>/<repo>/compare/<base-branch>...<prefix>/<name>?expand=1`
 
-3. Display the PR URL to the user.
+3. Print, as one copy-pasteable block:
+   - the compare URL
+   - the proposed PR **title**
+   - the proposed PR **body**, formatted per the PR requirements in the sub-skill
+     file, in a fenced block so it can be copied verbatim
 
-4. If the sub-skill file includes HAOS dev addon testing instructions (MA Server and MA Frontend do), provide those to the user.
+4. Tell the user plainly: *"Open that URL, paste the title and body, and review
+   before submitting. I will not open the PR for you."*
+
+5. If the sub-skill file includes HAOS dev addon testing instructions (MA Server and MA Frontend do), provide those to the user.
 
 ### 7i. Clean up reminder
 
