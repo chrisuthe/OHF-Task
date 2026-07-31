@@ -53,9 +53,135 @@ Present a "PR preview" covering:
 Then ask:
 - "Can you walk me through what this PR does in your own words?"
 - "Any parts you'd like me to explain differently?"
-- "Ready to create the PR, or do you want to change anything first?"
+- "Ready for me to push, or do you want to change anything first?"
 
-**Wait for their response.** Do NOT create the PR until the user confirms.
+**Wait for their response.** Do NOT push until the user confirms.
+
+This walkthrough is not a formality — the OHF `AI_POLICY.md` requires that the
+person submitting a change understands and can explain every part of it. If the
+user cannot yet explain a section back, that is a signal to keep teaching, not to
+proceed.
+
+**You never open the PR.** The same policy bars autonomous agents from opening
+pull requests or issues. You push the branch and hand over a compare URL plus a
+drafted title and body; the user opens it themselves (see step 7h).
+
+---
+
+## Consult the OHF Sage
+
+The [`ohf-sage`](https://github.com/chrisuthe/ohf-sage) subagent is the distilled
+voice of the OHF project leads, mined from real PR reviews and rejected feature
+requests. Every rule it gives cites the PR or issue it came from. Use it twice:
+
+**Before settling on an approach (7c).** Once you have a candidate plan but
+*before* presenting it as final, put it to the Sage:
+
+> Run this approach past the ohf-sage: `<one-paragraph summary of the plan>`.
+> Would this be accepted upstream by the project leads?
+
+Fold its answer into the plan you show the user, and surface any rule it cites
+along with the citation — the user should see *why*, not just *what*.
+
+**Before opening the PR (7g).** Have it review the actual change. The Sage has
+only `Read`, `Grep` and `Glob` — **it cannot run `git diff` itself**, so you must
+hand it the material:
+
+> Review this change against project standards. Changed files:
+> `<paths>`. The diff is below.
+> ```
+> <output of `git diff <base>...HEAD`>
+> ```
+
+Naming the paths lets it read surrounding context; the inline diff tells it what
+actually changed. Give it both — paths alone hide the change, diff alone hides the
+context it is judged against.
+
+Treat a Sage objection as blocking until either the change is made or the user
+explicitly overrules it. Say which happened in the PR walkthrough.
+
+### Scope — this deliberately excludes Home Assistant
+
+The Sage speaks for **Music Assistant, ESPHome, OHF-Voice and Sendspin only**.
+Its principles are mined from those projects' leads and do **not** speak for
+Home Assistant Core or Frontend. For `ha-core` and `ha-frontend` tasks, skip
+both Sage steps and rely on the project's own documented standards.
+
+If the `ohf-sage` subagent is not installed, say so once and continue — do not
+block the task on it, and do not invent what it would have said.
+
+---
+
+## Code standards (all OHF projects)
+
+The repo's own tooling is the authority, not habit or general convention. Read
+its existing code, its `CLAUDE.md` / `AGENTS.md`, and its linter config first.
+Where a repo's prose docs and its `pyproject.toml` disagree, **the config wins**.
+
+### Docstrings
+
+**Multi-line docstrings start the summary on the line *after* the opening
+quotes.** This is ruff's `D213`, explicitly selected in both `home-assistant/core`
+and `music-assistant/server`, so it is enforced rather than preferred:
+
+```python
+def async_get_album_tracks(self, album_id: str) -> list[Track]:
+    """
+    Return every track on an album, preferring the local cache.
+
+    Raises ProviderUnavailableError when the upstream provider is unreachable.
+    """
+```
+
+**Docstrings address the consumer** — what it returns, what it raises, what the
+caller must know. Not how it works internally; that is what the code and, where
+genuinely unclear, a comment are for.
+
+### Comments
+
+- **Explain what is not obvious at a glance.** A comment restating the line
+  above it is noise.
+- **Respect existing comments.** An author wrote it for a reason that may not be
+  visible from the current diff. Do not delete or rewrite one unless it is
+  actually wrong or the code it describes is gone.
+- **Describe the CURRENT code, not its history.** Never write "previously this
+  used X", "changed to fix Y", or "was broken because Z". That belongs in the PR
+  description. Someone reading the file a year from now needs to know what is
+  there, not what it replaced.
+
+### Layout
+
+**Public methods at the top, private at the bottom.** Music Assistant enforces
+this per class via the `check_method_order` pre-commit hook: once a private
+(single/double underscore, non-dunder) method appears in a class body, every
+later method must also be private. Older classes are grandfathered via
+`scripts/lint_baselines/private_methods_not_last.txt` — **new code is not**.
+
+---
+
+## How to work
+
+**Check yourself at every step.** Verify against the repo, the tooling, or a real
+run — never against recollection. Run the repo's own hooks and tests rather than
+reasoning about whether a change is correct.
+
+**Ask at the slightest ambiguity.** A question costs a moment; a wrong assumption
+costs a rewrite and a review cycle.
+
+**Keep changes minimal, short and specific.** Touch what the task requires and no
+more, unless a wider change is genuinely needed or the user has already agreed
+that is the goal. An unrequested drive-by refactor makes a diff harder to review
+and harder to revert.
+
+**KISS.** The simplest design that fully meets the requirement is the right one.
+Added indirection must earn its place.
+
+**SOLID where it is reasonable** — as a tool for clarity and testability, not a
+box to tick.
+
+**Do not settle for "good enough".** The solution should be robust, complete,
+and architecturally sound. These last two points pull against each other on
+purpose: be thorough about the thing you were asked to do, and only that.
 
 ---
 
