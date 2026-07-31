@@ -42,10 +42,27 @@
 
 ## Lint & Test
 
+### Hook runner: `pre-commit`
+
+```bash
+pre-commit run --all-files
+```
+
+This is the gate. `script/quicklint` is the faster changed-files-only pass for a
+tight loop.
+
+(Contrast `home-assistant/core`, which uses `prek` — `pre-commit` there silently
+bypasses the real runner. Don't carry the habit between repos.)
+
+### Individual tools
+
 ```bash
 # Python side
 ruff check <files>
 ruff format --check <files>
+
+# Changed files only — quicker than the full hook run
+script/quicklint
 
 # C++ side: clang-format is checked by CI
 # Full local check:

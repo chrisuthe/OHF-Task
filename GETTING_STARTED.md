@@ -90,9 +90,15 @@ The skill will:
 5. Present a "lay of the land" briefing — which files matter, how data flows, existing code to model after — and wait for your questions.
 6. Plan the change with you, file-by-file, before writing any code.
 7. Implement in chunks, pausing after each logical section to explain what it did and why.
-8. Run `ruff`, `mypy` (if applicable), `pylint`, `hassfest`, and `pytest` against the touched files.
+8. Run `ruff`, `mypy` (if applicable), `pylint`, `hassfest`, and `pytest` against the touched files, then the repo's real hook runner — `prek run --all-files` for HA Core.
 9. Do a full PR walkthrough and ask you to explain the change back in your own words before pushing.
-10. Push the branch, open a PR with a correctly-formatted body, and print the PR URL.
+10. Push the branch, then hand you a GitHub compare URL plus a drafted title and body. **You open the PR yourself** — per the OHF `AI_POLICY.md`, agents do not open pull requests or issues.
+
+> On Music Assistant, ESPHome, OHF-Voice and Sendspin tasks the skill also
+> consults the [`ohf-sage`](https://github.com/chrisuthe/ohf-sage) subagent twice:
+> once before finalising the plan ("would this be accepted upstream?"), and again
+> to review the diff before you push. It is skipped for Home Assistant, whose
+> standards the Sage deliberately does not speak for.
 
 ### Without an issue (just a named task)
 

@@ -32,6 +32,24 @@
 
 ## Lint & Test
 
+### Hook runner: `pre-commit`
+
+```bash
+pre-commit run --all-files
+```
+
+This is the gate, and it runs custom hooks the individual tools below do not
+cover — notably `check_method_order` (public methods before private, per class),
+`check_blocking_io` and `check_test_layout`. Expect those to catch things `ruff`
+and `mypy` are perfectly happy with.
+
+(Contrast `home-assistant/core`, which uses `prek` — `pre-commit` there silently
+bypasses the real runner. Don't carry the habit between repos.)
+
+### Individual tools
+
+Useful for tight loops on specific files. Finish with the hook runner above.
+
 ```bash
 ruff check <files>
 ruff format --check <files>
